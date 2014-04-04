@@ -1,0 +1,8 @@
+<root>
+    <log prefix="fight_server" level="4" />
+    <client_acceptor listen_ip="0.0.0.0" listen_port="9999" online_threshold="10000" />
+    <server_acceptor listen_ip="0.0.0.0" listen_port="9998" />
+
+    <shutdown delay_sec="5" />
+</root>
+

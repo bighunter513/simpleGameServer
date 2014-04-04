@@ -1,0 +1,27 @@
+
+namespace protocols {
+namespace common {
+
+message HeartBeatRequest {
+	optional int32 value = 1;
+}
+
+message HeartBeatResponse {
+	optional int32 value = 1;
+	optional int64 server_time = 2;
+}
+
+message InitConnectionRequest {
+	optional int32 ver = 1;
+}
+
+message InitConnectionResponse {
+	optional int32 error_code = 1;
+	optional int32 begin_seq = 2;
+	optional int64 server_time = 3;
+	optional int32 server_id = 4;
+}
+
+
+}
+}
