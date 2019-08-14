@@ -10,7 +10,7 @@
 
 #include <time.h>
 
-namespace king
+namespace xlnet
 {
 
 /*
@@ -118,20 +118,20 @@ private:
 #endif
 
 
-#define error_log_format(logger, fmt ,args...) write_log_format(logger,king::day_roll_logger::LOG_LEVEL_ERROR, fmt,##args)
-#define warn_log_format(logger, fmt ,args...) write_log_format(logger,king::day_roll_logger::LOG_LEVEL_WARN, fmt,##args)
-#define info_log_format(logger, fmt ,args...) write_log_format(logger,king::day_roll_logger::LOG_LEVEL_INFO, fmt,##args)
+#define error_log_format(logger, fmt ,args...) write_log_format(logger,xlnet::day_roll_logger::LOG_LEVEL_ERROR, fmt,##args)
+#define warn_log_format(logger, fmt ,args...) write_log_format(logger,xlnet::day_roll_logger::LOG_LEVEL_WARN, fmt,##args)
+#define info_log_format(logger, fmt ,args...) write_log_format(logger,xlnet::day_roll_logger::LOG_LEVEL_INFO, fmt,##args)
 
-#define error_log_string(logger,content) write_log_string(logger,king::day_roll_logger::LOG_LEVEL_ERROR,content)
-#define warn_log_string(logger,content) write_log_string(logger,king::day_roll_logger::LOG_LEVEL_WARN,content)
-#define info_log_string(logger,content) write_log_string(logger,king::day_roll_logger::LOG_LEVEL_INFO,content)
+#define error_log_string(logger,content) write_log_string(logger,xlnet::day_roll_logger::LOG_LEVEL_ERROR,content)
+#define warn_log_string(logger,content) write_log_string(logger,xlnet::day_roll_logger::LOG_LEVEL_WARN,content)
+#define info_log_string(logger,content) write_log_string(logger,xlnet::day_roll_logger::LOG_LEVEL_INFO,content)
 
 #ifdef NDEBUG
 #define debug_log_format(logger,fmt,args...)
 #define debug_log_string(logger,content)
 #else
-#define debug_log_format(logger,fmt,args...) write_log_format(logger,king::day_roll_logger::LOG_LEVEL_DEBUG,fmt,##args)
-#define debug_log_string(logger,content) write_log_format(logger,king::day_roll_logger::LOG_LEVEL_DEBUG,content)
+#define debug_log_format(logger,fmt,args...) write_log_format(logger,xlnet::day_roll_logger::LOG_LEVEL_DEBUG,fmt,##args)
+#define debug_log_string(logger,content) write_log_format(logger,xlnet::day_roll_logger::LOG_LEVEL_DEBUG,content)
 #endif
 
 }

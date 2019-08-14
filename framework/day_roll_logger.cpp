@@ -13,7 +13,7 @@
 #include <string.h>
 #include "day_roll_logger.h"
 
-namespace king
+namespace xlnet
 {
 
 static const char* log_level_str[] =
@@ -101,7 +101,7 @@ int day_roll_logger::prepare()
     {
         if(strcmp(m_prefix,"/dev/null")==0)  return 0 ;
         char filename[MAX_PREFIX_SIZE*2] = {0} ;
-        snprintf(filename,sizeof(filename),"%s-%04d-%02d-%02d.log",m_prefix
+        snprintf(filename,sizeof(filename),"log/%s-%04d-%02d-%02d.log",m_prefix
                 ,m_now.tm_year,m_now.tm_mon,m_now.tm_mday) ;
         int fd = open(filename,O_APPEND|O_WRONLY|O_CREAT,0755) ;
         if ( fd < 0 ) return -1 ;

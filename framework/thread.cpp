@@ -11,7 +11,7 @@
 #include "thread.h"
 
 
-namespace king
+namespace xlnet
 {
 
 int thread::start()

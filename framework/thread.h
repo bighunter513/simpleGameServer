@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 
-namespace king
+namespace xlnet
 {
 
 class thread

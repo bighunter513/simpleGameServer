@@ -10,7 +10,7 @@
 
 
 
-namespace king
+namespace xlnet
 {
 
 	enum

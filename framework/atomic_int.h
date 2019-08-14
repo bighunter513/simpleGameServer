@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-namespace king
+namespace xlnet
 {
 
 template<typename T>

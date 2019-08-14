@@ -10,7 +10,7 @@
 
 #include "buffer.h"
 
-namespace king
+namespace xlnet
 {
 
 buffer::buffer():m_begin(NULL),m_end(NULL),m_data(NULL),m_space(NULL)
@@ -49,7 +49,7 @@ int buffer::resize(int size)
 
     if( m_space - m_begin > size ) return -1 ;
 
-    char* new_buffer = (char*)realloc(m_begin,size) ;
+    char* new_buffer = (char*)realloc(m_begin, size) ;
     if(new_buffer == NULL ) return -2 ;
     if(new_buffer == m_begin )
     {

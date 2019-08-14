@@ -8,7 +8,7 @@
 #ifndef UNIX_CONFIG_H_
 #define UNIX_CONFIG_H_
 
-namespace king
+namespace xlnet
 {
 
 class unix_config

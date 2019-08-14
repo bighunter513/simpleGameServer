@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <map>
 
-namespace king
+namespace xlnet
 {
 
 class fsm_manager ;

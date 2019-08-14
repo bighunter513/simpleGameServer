@@ -7,7 +7,7 @@
 
 #include "timer_manager.h"
 
-namespace king
+namespace xlnet
 {
 
 void base_timer::base_timer_insert(base_timer* prev,base_timer* curr,base_timer* next)

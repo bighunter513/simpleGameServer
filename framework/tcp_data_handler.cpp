@@ -14,7 +14,9 @@
 #include "tcp_data_handler.h"
 
 
-namespace king
+extern int errno;
+
+namespace xlnet
 {
 
 tcp_data_handler::tcp_data_handler():m_reactor(NULL)
@@ -101,46 +103,48 @@ void tcp_data_handler::fini(bool release)
 
 void tcp_data_handler::on_read(int fd)
 {
-
     do
     {
         int recv_len = recv(fd,m_rbuf.space(),m_rbuf.space_size(),0) ;
         if(recv_len >0)
         {
+            //LOG_DEBUG("recv_len: %d \n", recv_len);
             m_rbuf.push_data(recv_len) ;
-            while(m_rbuf.data_size() > 0)
+            while(m_rbuf.data_size() > (int)sizeof(ss_head))
             {
                 packet_info pi = {0} ;
                 int ret = 0 ;
-                if((ret=get_packet_info(m_rbuf.data(),m_rbuf.data_size(),&pi))!=0)
+                if((ret = get_packet_info(m_rbuf.data(), m_rbuf.data_size(), &pi)) != 0 )
                 {
-                    handle_error(ret);
+                    LOG_DEBUG("get packet info %d\n", ret);
+                    handle_error(ERROR_TYPE_NONE, ret);
                     return ;
                 }
-                     
-                if( pi.size < 1 || pi.size > 4194304 )
+                //LOG_DEBUG("pay_size: %d \n", pi.pay_size);
+                if( pi.pay_size < 1 || pi.pay_size > 4194304 )
                 {
-                    handle_error(ERROR_TYPE_REQUEST) ;
+                    handle_error(ERROR_TYPE_REQUEST, 0) ;
                     return ;
                 }
 
-                if(m_rbuf.data_size() >= pi.size )
+				        if (m_rbuf.data_size() >= (int)(pi.pay_size + sizeof(ss_head)))
                 {
-                    if((ret=process_packet(&pi)) !=0 )
+                    LOG_DEBUG("head size %d, pay size %d\n", sizeof(ss_head), pi.pay_size);
+                    if((ret = process_packet(&pi)) != 0 )
                     {
-                        handle_error(ret) ;
+                        handle_error(ERROR_TYPE_NONE, ret) ;
                         return ;
                     }
 
-                    m_rbuf.pop_data(pi.size) ;
+                    m_rbuf.pop_data(pi.pay_size + sizeof(ss_head)) ;
                 }
                 else
                 {
-                    if(m_rbuf.space_size() < pi.size - m_rbuf.data_size())
+					          if (m_rbuf.space_size() < (int)(pi.pay_size + sizeof(ss_head) - m_rbuf.data_size()))
                     {
-                        if(m_rbuf.resize(m_rbuf.capacity() + pi.size )!=0)
+                        if(m_rbuf.resize(m_rbuf.capacity() + pi.pay_size + sizeof(ss_head)) != 0)
                         {
-                            handle_error(ERROR_TYPE_MEMORY) ;
+                            handle_error(ERROR_TYPE_MEMORY, errno) ;
                             return ;
                         }
                     }
@@ -155,14 +159,14 @@ void tcp_data_handler::on_read(int fd)
         else if(recv_len == 0)
         {
             //peer close
-            handle_error(ERROR_TYPE_PEER_CLOSE) ;
+            handle_error(ERROR_TYPE_PEER_CLOSE, 0) ;
             return ;
         }
         else 
         {
             if (errno != EAGAIN &&  errno != EINTR)
             {
-                handle_error(ERROR_TYPE_SYSTEM)  ;
+                handle_error(ERROR_TYPE_SYSTEM, errno) ;
                 return ;
             }
 
@@ -179,38 +183,32 @@ void tcp_data_handler::on_write(int fd)
     if(m_sbuf.data_size() > 0 )
     {
         int to_send = m_sbuf.data_size() > m_max_write_size ? m_max_write_size : m_sbuf.data_size();
-        int send_size = ::send(fd,m_sbuf.data(),to_send,0) ;
+        int send_size = ::send(fd, m_sbuf.data(), to_send, 0) ;
         if(send_size >0)
         {
             m_sbuf.pop_data(send_size) ;
             m_sbuf.adjust() ;
-
         }
         else if ( send_size < 0)
         {
-            
             if (errno != EAGAIN &&  errno != EINTR)
             {
-                handle_error(ERROR_TYPE_SYSTEM) ;
+                handle_error(ERROR_TYPE_SYSTEM, errno) ;
                 return ;
             }
-            
         }
     }
 
     if(m_sbuf.data_size() == 0)
     {
         m_reactor->mod_handler(fd,this,epoll_reactor::EVENT_READ) ;
-
     }
 
 }
 
 void tcp_data_handler::on_error(int fd)
 {
-
-    handle_error(ERROR_TYPE_SYSTEM) ;
-
+    handle_error(ERROR_TYPE_SYSTEM, errno) ;
 }
 
 int tcp_data_handler::send(const char* data,int size,int delay_flag)
@@ -240,7 +238,7 @@ int tcp_data_handler::send(const char* data,int size,int delay_flag)
     //push remaining data to send buffer
     size -= send_size ;
 
-    memcpy(m_sbuf.space(),data + send_size , size) ;
+    memcpy(m_sbuf.space(), data + send_size , size) ;
     m_sbuf.push_data(size) ;
     m_reactor->mod_handler(m_id.fd,this,epoll_reactor::EVENT_READ | epoll_reactor::EVENT_WRITE) ;
     //if(delay_flag == 0) on_write(m_id.fd) ;
@@ -248,7 +246,7 @@ int tcp_data_handler::send(const char* data,int size,int delay_flag)
     return 0 ;
 }
 
-int tcp_data_handler::send( packet *p,int delay_flag)
+int tcp_data_handler::send(packet *p, int delay_flag)
 {
     if(m_id.fd < 0 ) return -1 ;
     int size = p->encode_size() ;
@@ -258,18 +256,21 @@ int tcp_data_handler::send( packet *p,int delay_flag)
         return -1 ;
     }
 
-    size = p->encode(m_sbuf.space(),m_sbuf.space_size()) ;
+    size = p->encode(m_sbuf.space(), m_sbuf.space_size()) ;
     if ( size < 1 ) return -1 ;
+
     m_sbuf.push_data(size) ;
-    m_reactor->mod_handler(m_id.fd,this,epoll_reactor::EVENT_READ | epoll_reactor::EVENT_WRITE) ;
+
+    m_reactor->mod_handler(m_id.fd, this, epoll_reactor::EVENT_READ | epoll_reactor::EVENT_WRITE) ;
     if(delay_flag == 0) on_write(m_id.fd) ;
 
     return 0 ;
 }
 
-void tcp_data_handler::handle_error(int error_type)
+void tcp_data_handler::handle_error(int error_type, int err)
 {
-    on_event(error_type) ;
+    LOG_DEBUG("handle_error: %d: %d\n", error_type, err);
+    on_event(err) ;
 
 }
 

@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 
-namespace king
+namespace xlnet
 {
 
 class timer_manager  ;

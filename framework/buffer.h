@@ -8,7 +8,7 @@
 #ifndef BUFFER_H_
 #define BUFFER_H_
 
-namespace king
+namespace xlnet
 {
 
 /*

@@ -11,7 +11,7 @@
 
 #include "tcp_acceptor.h"
 
-namespace king
+namespace xlnet
 {
 
 tcp_acceptor::tcp_acceptor():m_reactor(NULL),m_fd(-1)

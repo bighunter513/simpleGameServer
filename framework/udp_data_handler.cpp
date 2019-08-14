@@ -15,9 +15,10 @@
 
 #include "time_util.h"
 #include "udp_data_handler.h"
+#include "game_packet.h"
 
 
-namespace king
+namespace xlnet
 {
 
 udp_data_handler::udp_data_handler()
@@ -97,7 +98,7 @@ void udp_data_handler::on_read(int fd)
     if(recv_len > 0)
     {
         m_rbuf.push_data(recv_len) ;
-        while(m_rbuf.data_size() > 0)
+        while(m_rbuf.data_size() >= sizeof(ss_head))
         {
             packet_info pi = {0} ;
             int ret = 0 ;
@@ -107,13 +108,13 @@ void udp_data_handler::on_read(int fd)
                 return ;
             }
                  
-            if( pi.size < 1 || pi.size > 4194304 )
+            if( pi.pay_size < 1 || pi.pay_size > 4194304 )
             {
                 handle_error(ERROR_TYPE_REQUEST) ;
                 return ;
             }
 
-            if(m_rbuf.data_size() >= pi.size )
+            if(m_rbuf.data_size() >= pi.pay_size + sizeof(ss_head))
             {
                 if((ret=process_packet(&pi)) !=0 )
                 {
@@ -121,13 +122,13 @@ void udp_data_handler::on_read(int fd)
                     return ;
                 }
 
-                m_rbuf.pop_data(pi.size) ;
+                m_rbuf.pop_data(pi.pay_size + sizeof(ss_head)) ;
             }
             else
             {
-                if(m_rbuf.space_size() < pi.size - m_rbuf.data_size())
+                if(m_rbuf.space_size() < pi.pay_size + sizeof(ss_head) - m_rbuf.data_size())
                 {
-                    if(m_rbuf.resize(m_rbuf.capacity() + pi.size )!=0)
+                    if(m_rbuf.resize(m_rbuf.capacity() + pi.pay_size + sizeof(ss_head))!=0)
                     {
                         handle_error(ERROR_TYPE_MEMORY) ;
                         return ;

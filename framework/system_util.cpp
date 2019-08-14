@@ -7,6 +7,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -20,7 +21,7 @@
 
 #include "system_util.h"
 
-namespace king
+namespace xlnet
 {
 
 
@@ -104,6 +105,9 @@ int get_open_file_limit()
 
 int daemon_init(int nochdir,int noclose)
 {
+    // clear file creation mask
+    umask(0); 
+
     pid_t pid = 0 ;
     if( (pid = fork() ) < 0 ) return -1 ;
     else if(pid != 0 )  _exit(0) ;

@@ -10,7 +10,7 @@
 
 #include <new>
 
-namespace king
+namespace xlnet
 {
 /*
  * @brief circular queue , push elements at the head and pop elements at the tail

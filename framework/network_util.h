@@ -13,7 +13,7 @@
 #include <sys/un.h>
 #include <sys/types.h>
 
-namespace king
+namespace xlnet
 {
 
 //in_addr_t
@@ -29,7 +29,7 @@ typedef struct ::sockaddr_un sa_un_t ;
  *@param [in] port
  */
 void init_sa_in(sa_in_t* addr,const char* ip,int port) ;
-int compare_sa_in(sa_in_t* addr1,sa_in_t* addr2);
+int  compare_sa_in(sa_in_t* addr1,sa_in_t* addr2);
 void init_sa_un(sa_un_t* addr,const char* sockfile) ;
 
 int set_nonblock(int fd) ;

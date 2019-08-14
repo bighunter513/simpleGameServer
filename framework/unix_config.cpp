@@ -13,7 +13,7 @@
 
 #include "unix_config.h"
 
-namespace king
+namespace xlnet
 {
 
 static const char* node_delimiter_string = " \t\r=\n" ;

@@ -17,7 +17,7 @@
 #include "buffer.h"
 #include "packet.h"
 
-namespace king
+namespace xlnet
 {
 
 

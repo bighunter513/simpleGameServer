@@ -22,7 +22,7 @@
 
 #include "network_util.h"
 
-namespace king
+namespace xlnet
 {
 
 ssize_t send_wrapper(int __fd, __const void *__buf, size_t __n, int __flags)

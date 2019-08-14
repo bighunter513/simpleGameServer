@@ -8,11 +8,14 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <libgen.h>
+#include <string>
 
 #include "application.h"
 #include "system_util.h"
 
-namespace king
+using namespace std;
+
+namespace xlnet
 {
 application::application():
         tick_ms(get_tsc_us()*1000),
@@ -179,6 +182,18 @@ void application::change_work_directory(const char* argv0)
 
 }
 
+void application::write_self_pid()
+{
+	string pid_filename = "server.pid";
+	int fd = open(pid_filename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd != -1)
+	{
+		char buf[128] = { 0 };
+		sprintf(buf, "%d", (int)getpid());
+		write(fd, buf, strlen(buf));
+		close(fd);
+	}
+}
 
 int application::start(int argc,char** argv)
 {
@@ -215,6 +230,8 @@ int application::start(int argc,char** argv)
            close(fd);
         }
     }
+
+	write_self_pid();
 
     on_timeout(&timer_engine) ;
     while(1)

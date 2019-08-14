@@ -10,12 +10,13 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 #include <time.h>
 
 
-namespace king
+namespace xlnet
 {
 
 #define error_exit(num,fmt,args...)  \

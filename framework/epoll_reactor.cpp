@@ -13,7 +13,7 @@
 #include "epoll_reactor.h"
 #include "io_handler.h"
 
-namespace king
+namespace xlnet
 {
 
 epoll_reactor::epoll_reactor():m_maxfd(0),m_epfd(-1),m_events(NULL),m_handlers(NULL)

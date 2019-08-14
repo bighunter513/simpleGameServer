@@ -15,7 +15,7 @@
 #include "timer_manager.h"
 #include "time_util.h"
 
-namespace king
+namespace xlnet
 {
 
 class application
@@ -56,6 +56,7 @@ public:
 
     void send_signal(int signo) ;
 
+	void write_self_pid();
 protected:
 
     /*
@@ -141,7 +142,7 @@ private:
     app_type& get_app(){ static app_type app ; return app ; }
 
 #define IMPLEMENT_MAIN()      \
-    void sig_handler(int signo){get_app().send_signal(signo);}      \
+    void sig_handler(int signo){ get_app().send_signal(signo);}      \
     int main(int argc,char** argv){                 \
         get_app() ;                                 \
         signal(SIGINT,sig_handler) ;               \

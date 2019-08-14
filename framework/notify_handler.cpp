@@ -10,7 +10,7 @@
 #include "notify_handler.h"
 
 
-namespace king
+namespace xlnet
 {
 
 

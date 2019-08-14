@@ -8,7 +8,7 @@
 #ifndef PACKET_PROCESSOR_H_
 #define PACKET_PROCESSOR_H_
 
-namespace king
+namespace xlnet
 {
 
 class tcp_connection ;

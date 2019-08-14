@@ -12,7 +12,7 @@
 #include <endian.h>
 #include <byteswap.h>
 
-namespace king
+namespace xlnet
 {
 
 # if __BYTE_ORDER == __BIG_ENDIAN
@@ -37,6 +37,8 @@ namespace king
 
 #endif
 
+#define MAX_PACKET_SIZE  (4194304)
+
 class packet
 {
 public:
@@ -54,7 +56,7 @@ public:
      * @param [in] max buffer size
      * @return actual encoded size , -1 on failure
      */
-    virtual int encode(char* data,int max_size) = 0 ;
+    virtual int encode(char* data, int max_size) = 0 ;
 
 
     /*
@@ -63,13 +65,13 @@ public:
      * @param [in]  buffer size
      * @return actual decoded size , -1 on failure
      */
-    virtual int decode(const char* data,int size) = 0 ;
+    virtual int decode(const char* data, int size) = 0 ;
 
 
     /*
      * @brief get needed buffer size of encoding , implemented by concrete class
 
-     * @return needed buffer size , -1 on failure
+     * @return needed buffer size , include header size, -1 on failure
      */
     virtual int encode_size() = 0 ;
 
@@ -80,15 +82,14 @@ public:
      * @param [in] buffer size
      * @return actual encoded size , -1 on failure
      */
-    virtual int decode_size(const char* data,int size) = 0 ;
+    virtual int decode_size(const char* data, int size) = 0 ;
 };
 
 struct packet_info
 {
-    int size ;
-    int type ;
+    int   pay_size ; // payload size, exclude header size
     const char* data ;
-}  ;
+};
 
 
 class packet_factory
@@ -104,7 +105,7 @@ public:
      * @param [out] packet info
      * @return 0 on success , -1 on failure
      */
-    virtual int get_info(const char* data,int size,packet_info* pi) = 0 ;
+    virtual int get_info(const char* data, int size, packet_info* pi) = 0 ;
 
 
     /*
@@ -113,7 +114,7 @@ public:
      * @param [in] packet info
      * @return 0 on success , -1 on failure
      */
-    virtual packet* create(const char* data,const packet_info* pi) = 0 ;
+    virtual packet* create(const char* data, const packet_info* pi) = 0 ;
 
 };
 

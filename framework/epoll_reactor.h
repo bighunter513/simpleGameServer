@@ -10,7 +10,7 @@
 
 #include <sys/epoll.h>
 
-namespace king
+namespace xlnet
 {
 
 class io_handler ;

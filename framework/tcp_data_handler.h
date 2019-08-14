@@ -14,7 +14,7 @@
 #include "buffer.h"
 #include "packet.h"
 
-namespace king
+namespace xlnet
 {
 
 
@@ -28,12 +28,12 @@ public:
 
         bool operator!=(const connection_id& o)
         {
-            return ( fd!=o.fd || timestamp != o.timestamp) ;
+            return ( fd != o.fd || timestamp != o.timestamp) ;
         }
 
         bool operator==(const connection_id& o)
         {
-            return ( fd==o.fd && timestamp == o.timestamp) ;
+            return ( fd == o.fd && timestamp == o.timestamp) ;
         }
 
     }  ;
@@ -150,7 +150,7 @@ protected:
     virtual void on_write(int fd) ;
     virtual void on_error(int fd) ;
 
-    void handle_error(int error_type) ;
+    void handle_error(int error_type, int err) ;
     
 private:
     buffer m_rbuf ;

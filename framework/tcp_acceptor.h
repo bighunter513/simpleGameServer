@@ -14,7 +14,7 @@
 #include "network_util.h"
 #include "epoll_reactor.h"
 
-namespace king
+namespace xlnet
 {
 
 

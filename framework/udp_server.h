@@ -20,7 +20,7 @@
 #include "epoll_reactor.h"
 #include "packet.h"
 
-namespace king
+namespace xlnet
 {
 
 

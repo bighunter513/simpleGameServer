@@ -9,7 +9,7 @@
 #include <stddef.h>
 #include "fsm_manager.h"
 
-namespace king
+namespace xlnet
 {
 
 fsm_manager::fsm_manager()
