@@ -201,7 +201,7 @@ void tcp_data_handler::on_write(int fd)
 
     if(m_sbuf.data_size() == 0)
     {
-        m_reactor->mod_handler(fd,this,epoll_reactor::EVENT_READ) ;
+        m_reactor->mod_handler(fd, this, epoll_reactor::EVENT_READ) ;
     }
 
 }
@@ -214,7 +214,7 @@ void tcp_data_handler::on_error(int fd)
 int tcp_data_handler::send(const char* data,int size,int delay_flag)
 {
     if(m_id.fd < 0 ) return -1 ;
-    if(m_sbuf.space_size() < size &&(m_sbuf.resize(m_sbuf.capacity() + size )!=0) )
+    if(m_sbuf.space_size() < size && (m_sbuf.resize(m_sbuf.capacity() + size ) != 0) )
     {
         return -1 ;
     }
@@ -223,7 +223,7 @@ int tcp_data_handler::send(const char* data,int size,int delay_flag)
     //try send data directly
     if(m_sbuf.data_size()==0 && delay_flag ==0)
     {
-        send_size = ::send(m_id.fd,data,size,0) ;
+        send_size = ::send(m_id.fd, data, size, 0) ;
         if(send_size <0)
         {
             if (errno != EAGAIN &&  errno != EINTR)
@@ -238,9 +238,13 @@ int tcp_data_handler::send(const char* data,int size,int delay_flag)
     //push remaining data to send buffer
     size -= send_size ;
 
-    memcpy(m_sbuf.space(), data + send_size , size) ;
-    m_sbuf.push_data(size) ;
-    m_reactor->mod_handler(m_id.fd,this,epoll_reactor::EVENT_READ | epoll_reactor::EVENT_WRITE) ;
+    int  event = epoll_reactor::EVENT_READ,
+    if (size > 0) {
+        memcpy(m_sbuf.space(), data + send_size, size) ;
+        m_sbuf.push_data(size) ;
+        event = event & epoll_reactor::EVENT_WRITE ;
+    }
+    m_reactor->mod_handler(m_id.fd, this, event);
     //if(delay_flag == 0) on_write(m_id.fd) ;
 
     return 0 ;
